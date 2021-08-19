@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<queries>
+  <query name="org.billingsschools.midas.users" coreTable="USERS" flattened="true" tags="">
+    <summary>MIDAS Users</summary>
+    <description>MIDAS User data</description>
+    <columns>
+      <column column="STUDENTS.ID">external_id</column>
+      <column column="STUDENTS.LAST_NAME">last_name</column>
+      <column column="STUDENTS.FIRST_NAME">first_name</column>
+      <column column="STUDENTS.MIDDLE_NAME">mid_name</column>
+      <column column="STUDENTS.GENDER">gender_id</column>
+      <column column="STUDENTS.DOB">dob</column>
+      <column column="STUDENTS.DOB">username</column>
+      <column column="STUDENTS.ENROLL_STATUS">account_status</column>
+      <column column="STUDENTS.FEDETHNICITY">us_race_id</column>
+      <column column="STUDENTS.FEDETHNICITY">is_hispanic</column>
+    </columns>
+    <sql>
+      <![CDATA[
+        with studentemail as (
+          select
+            ssm.studentsdcid,
+            psc.email
+          from
+            psm_studentcontact psc
+            inner join sync_studentmap ssm
+              on psc.studentid = ssm.studentid
+            inner join psm_studentcontacttype psct
+              on psc.studentcontacttypeid = psct.id
+              and psct.name = 'Self'
+              and psc.email is not null
+        )
+
+        select
+            students.psguid "external_id"
+          , students.last_name "last_name"
+          , students.first_name "first_name"
+          , students.middle_name "mid_name"
+          , students.gender "gender_id"
+          , to_char(students.dob, 'yyyy-mm-dd') "dob"
+          , student_email.email "username"
+          , case
+              when students.enroll_status = 0 then 9
+              when students.enroll_status = 2 then 1
+              when students.exitcode like '4%' then 2
+              when students.exitcode like '320%' then 4
+              when students.exitcode like '5%' then 7
+            end "account_status"
+          , case
+              when students.fedethnicity = 1 then '7'
+              when (select count(1) from studentrace where studentrace.studentid = students.id) > 1 then '5'
+              else case(select studentrace.racecd from studentrace where students.id = studentrace.studentid)
+                when '01' then '1'
+                when '02' then '2'
+                when '04' then '3'
+                when '05' then '6'
+                when '06' then '4'
+              end
+            end "us_race_id"
+          , coalesce(to_char(students.fedethnicity), '0') "is_hispanic"
+        from
+          students
+          left join (select * from studentemail) student_email
+            on student_email.studentsdcid = students.dcid
+        where
+          student_email.email is not null
+
+        union all
+
+        select
+            users.psguid "external_id"
+          , users.last_name "last_name"
+          , users.first_name "first_name"
+          , users.middle_name "mid_name"
+          , '' "gender_id"
+          , '' "dob"
+          , users.email_addr "username"
+          , case when (select count(1) from schoolstaff where schoolstaff.users_dcid = users.dcid and schoolstaff.status = 1) > 0 then 9 else 99 end "account_status"
+          , '' "us_race_id"
+          , '' "is_hispanic"
+        from
+          users
+      ]]>
+    </sql>
+  </query>
+  <query name="org.billingsschools.midas.schools" coreTable="SCHOOLS" flattened="true" tags="">
+    <summary>MIDAS Schools</summary>
+    <description>MIDAS School data</description>
+    <columns>
+      <column column="SCHOOLS.SCHOOL_NUMBER">external_id</column>
+      <column column="SCHOOLS.NAME">name</column>
+      <column column="SCHOOLS.ABBREVIATION">nickname</column>
+      <column column="SCHOOLS.STATE">state_id</column>
+      <column column="SCHOOLS.STATE">country_id</column>
+      <column column="SCHOOLS.STATE">time_zone_id</column>
+      <column column="SCHOOLS.STATE">is_active</column>
+    </columns>
+    <sql>
+      <![CDATA[
+        select
+            schools.school_number "external_id"
+          , schools.name "name"
+          , schools.abbreviation "nickname"
+          , '27' "state_id"
+          , '232' "country_id"
+          , '7' "time_zone_id"
+          , '1' "is_active"
+        from
+          schools
+        where
+          schools.school_number not in (79438, 6200, 1258, 1267, 1834, 999999)
+      ]]>
+    </sql>
+  </query>
+</queries>
