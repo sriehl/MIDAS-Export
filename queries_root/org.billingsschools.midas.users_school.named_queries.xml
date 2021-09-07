@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<queries>
+  <query name="org.billingsschools.midas.users_school" coreTable="STUDENTS" flattened="true" tags="">
+    <summary>MIDAS Users School</summary>
+    <description>MIDAS Users School data</description>
+    <columns>
+      <column column="STUDENTS.ID">user_id</column>
+      <column column="STUDENTS.ENROLLMENTID">external_id</column>
+      <column column="STUDENTS.ENROLLMENT_SCHOOLID">school_id</column>
+      <column column="STUDENTS.ENROLLMENT_SCHOOLID">role_id</column>
+      <column column="STUDENTS.ENTRYDATE">entry_date</column>
+      <column column="STUDENTS.ENTRYCODE">entry_reason_id</column>
+      <column column="STUDENTS.EXITDATE">exit_date</column>
+      <column column="STUDENTS.EXITCODE">exit_reason_id</column>
+      <column column="STUDENTS.GRADE_LEVEL">grade_id</column>
+      <column column="STUDENTS.ENROLL_STATUS">status_id</column>
+    </columns>
+    <sql>
+      <![CDATA[
+        select
+            students.psguid "user_id"
+          , students.enrollmentid "external_id"
+          , students.enrollment_schoolid "school_id"
+          , 1 "role_id"
+          , to_char(students.entrydate, 'YYYY-MM-DD') "entry_date"
+          , case students.entrycode
+              when '01' then '171'
+              when '02' then '172'
+              when '03' then '173'
+              when '04' then '174'
+              when '05' then '175'
+              when '06' then '176'
+              when '07' then '177'
+              when '08' then '178'
+              when '09' then '179'
+              when '10' then '180'
+              when '20' then '181'
+              when '40' then '182'
+              when '60' then '183'
+              when '80' then '184'
+              else '???'
+            end "entry_reason_id"
+          , to_char(students.exitdate, 'YYYY-MM-DD') "exit_date"
+          , case students.exitcode
+              when '100' then '185'
+              when '105' then '186'
+              when '110' then '187'
+              when '120' then '188'
+              when '130' then '189'
+              when '140' then '190'
+              when '145' then '191'
+              when '150' then '192'
+              when '155' then '193'
+              when '160' then '194'
+              when '170' then '195'
+              when '175' then '196'
+              else ''
+            end "exit_reason_id"
+          , students.grade_level "grade_id"
+          , case
+              when students.enroll_status = 0 then '9'
+              when students.enroll_status = -1 then '15'
+              when students.exitcode like '4%' then '2'
+              when students.exitcode like '3%' then '1'
+              when students.exitcode like '5%' then '7'
+              else '99'
+            end "status_id"
+        from
+          students
+        where
+          students.schoolid not in (79438, 6200, 0)
+
+        union all
+
+        select
+            students.psguid "user_id"
+          , reenrollments.id "external_id"
+          , reenrollments.schoolid "school_id"
+          , 1 "role_id"
+          , to_char(reenrollments.entrydate, 'YYYY-MM-DD') "entry_date"
+          , case reenrollments.entrycode
+              when '01' then '171'
+              when '02' then '172'
+              when '03' then '173'
+              when '04' then '174'
+              when '05' then '175'
+              when '06' then '176'
+              when '07' then '177'
+              when '08' then '178'
+              when '09' then '179'
+              when '10' then '180'
+              when '20' then '181'
+              when '40' then '182'
+              when '60' then '183'
+              when '80' then '184'
+              else '???'
+            end "entry_reason_id"
+          , to_char(reenrollments.exitdate, 'YYYY-MM-DD') "exit_date"
+          , case reenrollments.exitcode
+              when '100' then '185'
+              when '105' then '186'
+              when '110' then '187'
+              when '120' then '188'
+              when '130' then '189'
+              when '140' then '190'
+              when '145' then '191'
+              when '150' then '192'
+              when '155' then '193'
+              when '160' then '194'
+              when '170' then '195'
+              when '175' then '196'
+              else ''
+            end "exit_reason_id"
+          , reenrollments.grade_level "grade_id"
+          , case
+              when reenrollments.exitcode like '4%' then '2'
+              when reenrollments.exitcode like '3%' then '1'
+              when reenrollments.exitcode like '5%' then '7'
+              else '99'
+            end "status_id"
+
+        from
+          reenrollments
+          left join students
+            on students.id = reenrollments.studentid
+        where
+          reenrollments.schoolid not in (79438, 6200, 0)
+
+        union all
+
+        select
+            users.psguid "user_id"
+          , schoolstaff.dcid "external_id"
+          , schoolstaff.schoolid "school_id"
+          , 2 "role_id"
+          , null "entry_date"
+          , null "entry_reason_id"
+          , null "exit_date"
+          , null "exit_reason_id"
+          , null "grade_id"
+          , case schoolstaff.status
+            when 1 then '9'
+            when 2 then '99'
+            end "status_id"
+        from
+          schoolstaff
+          left join users
+            on users.dcid = schoolstaff.users_dcid
+        where
+          schoolstaff.status = 1
+      ]]>
+    </sql>
+  </query>
+</queries>

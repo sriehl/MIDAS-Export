@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<queries>
+  <query name="org.billingsschools.midas.schools" coreTable="SCHOOLS" flattened="true" tags="">
+    <summary>MIDAS Schools</summary>
+    <description>MIDAS School data</description>
+    <columns>
+      <column column="SCHOOLS.SCHOOL_NUMBER">external_id</column>
+      <column column="SCHOOLS.NAME">name</column>
+      <column column="SCHOOLS.ABBREVIATION">nickname</column>
+      <column column="SCHOOLS.SCHOOLSTATE">state_id</column>
+      <column column="SCHOOLS.SCHOOLSTATE">country_id</column>
+      <column column="SCHOOLS.SCHOOLSTATE">time_zone_id</column>
+      <column column="SCHOOLS.SCHOOLSTATE">is_active</column>
+    </columns>
+    <sql>
+      <![CDATA[
+        select
+            schools.school_number "external_id"
+          , schools.name "name"
+          , schools.abbreviation "nickname"
+          , '27' "state_id"
+          , '232' "country_id"
+          , '7' "time_zone_id"
+          , '1' "is_active"
+        from
+          schools
+        where
+          schools.school_number not in (79438, 6200, 1258, 1267, 1834, 999999)
+      ]]>
+    </sql>
+  </query>
+</queries>
