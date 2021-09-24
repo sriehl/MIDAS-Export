@@ -17,20 +17,6 @@
     </columns>
     <sql>
       <![CDATA[
-        with studentemail as (
-          select
-            ssm.studentsdcid,
-            psc.email
-          from
-            psm_studentcontact psc
-            inner join sync_studentmap ssm
-              on psc.studentid = ssm.studentid
-            inner join psm_studentcontacttype psct
-              on psc.studentcontacttypeid = psct.id
-              and psct.name = 'Self'
-              and psc.email is not null
-        )
-
         select
             students.psguid "external_id"
           , students.last_name "last_name"
@@ -38,7 +24,7 @@
           , students.middle_name "mid_name"
           , students.gender "gender_id"
           , to_char(students.dob, 'yyyy-mm-dd') "dob"
-          , student_email.email "username"
+          , students.student_number "username"
           , case
               when students.enroll_status = 0 then 9
               when students.enroll_status = 2 then 1
@@ -60,10 +46,6 @@
           , coalesce(to_char(students.fedethnicity), '0') "is_hispanic"
         from
           students
-          left join (select * from studentemail) student_email
-            on student_email.studentsdcid = students.dcid
-        where
-          student_email.email is not null
 
         union all
 
