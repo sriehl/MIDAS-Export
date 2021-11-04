@@ -14,9 +14,29 @@
       <column column="STUDENTS.ENROLL_STATUS">account_status</column>
       <column column="STUDENTS.FEDETHNICITY">us_race_id</column>
       <column column="STUDENTS.FEDETHNICITY">is_hispanic</column>
+      <column column="STUDENTS.FEDETHNICITY">email</column>
+      <column column="STUDENTS.HOME_PHONE">phone_number</column>
+      <column column="STUDENTS.HOME_PHONE">phone_country_id</column>
+      <column column="STUDENTS.HOME_PHONE">phone_extension</column>
+      <column column="STUDENTS.SCHOOLID">school_id</column>
+      <column column="STUDENTS.SCHOOLID">role_id</column>
+      <column column="STUDENTS.GRADE_LEVEL">grade_id</column>
     </columns>
     <sql>
       <![CDATA[
+        with studentemail as (
+          select
+            ssm.studentsdcid,
+            psc.email
+          from
+            psm_studentcontact psc
+            inner join sync_studentmap ssm
+              on psc.studentid = ssm.studentid
+            inner join psm_studentcontacttype psct
+              on psc.studentcontacttypeid = psct.id
+              and psct.name = 'Self'
+              and psc.email is not null
+        )
         select
             students.psguid "external_id"
           , students.last_name "last_name"
@@ -24,7 +44,7 @@
           , students.middle_name "mid_name"
           , students.gender "gender_id"
           , to_char(students.dob, 'yyyy-mm-dd') "dob"
-          , students.student_number "username"
+          , to_char(students.student_number) "username"
           , case
               when students.enroll_status = 0 then 9
               when students.enroll_status = 2 then 1
@@ -44,8 +64,22 @@
               end
             end "us_race_id"
           , coalesce(to_char(students.fedethnicity), '0') "is_hispanic"
+          , studentemail.email "email"
+          , students.home_phone "phone_number"
+          , '' "phone_country_id"
+          , '' "phone_extension"
+          , students.schoolid "school_id"
+          , '1' "role_id"
+          , case students.grade_level
+              when 0 then '20'
+              else to_char(students.grade_level)
+            end "grade_id"
         from
           students
+          left join (select * from studentemail) studentemail
+            on studentemail.studentsdcid = students.dcid
+        where
+          students.enroll_status = 0
 
         union all
 
@@ -60,8 +94,25 @@
           , case when (select count(1) from schoolstaff where schoolstaff.users_dcid = users.dcid and schoolstaff.status = 1) > 0 then 9 else 99 end "account_status"
           , '' "us_race_id"
           , '' "is_hispanic"
+          , users.email_addr "email"
+          , '' "phone_number"
+          , '' "phone_country_id"
+          , '' "phone_extension"
+          , schoolstaff.schoolid "school_id"
+          , '2' "role_id"
+          , '' "grade_id"
         from
           users
+          left join schoolstaff
+            on schoolstaff.users_dcid = users.dcid
+        where
+          (
+            users.ptaccess = 1
+            or users.psaccess = 1
+          )
+          and users.email_addr is not null
+          and schoolstaff.staffstatus = 1
+          and schoolstaff.schoolid not in (79438, 6200, 1258, 1267, 1834, 999999, 0)
       ]]>
     </sql>
   </query>
