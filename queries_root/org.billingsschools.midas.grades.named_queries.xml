@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<queries>
+  <query name="org.billingsschools.midas.grades" coreTable="GRADESCALEITEM" flattened="true" tags="">
+    <summary>MIDAS Grades</summary>
+    <description>MIDAS Grade data</description>
+    <columns>
+      <column column="GRADESCALEITEM.DCID">id</column>
+      <column column="GRADESCALEITEM.DCID">district_id</column>
+      <column column="GRADESCALEITEM.NAME">name</column>
+      <column column="GRADESCALEITEM.DESCRIPTION">description</column>
+      <column column="GRADESCALEITEM.CUTOFFPERCENTAGE">min_score</column>
+    </columns>
+    <sql>
+      <![CDATA[
+        select
+            gradescaleitem.dcid "id"
+          , '' "district_id"
+          , gradescaleitem.name "name"
+          , gradescaleitem.description "description"
+          , gradescaleitem.cutoffpercentage "min_score"
+        from
+          gradescaleitem
+        where
+          gradescaleid = 175
+      ]]>
+    </sql>
+  </query>
+</queries>
