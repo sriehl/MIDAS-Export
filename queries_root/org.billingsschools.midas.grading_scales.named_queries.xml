@@ -10,7 +10,7 @@
       <column column="GRADESCALEITEM.DESCRIPTION">description</column>
       <column column="GRADESCALEITEM.DESCRIPTION">district_id</column>
       <column column="SCHOOL_COURSE.SCHOOLID">school_id</column>
-      <column column="GRADESCALEITEM.DESCRIPTION">is_pring</column>
+      <column column="GRADESCALEITEM.DESCRIPTION">is_print</column>
       <column column="GRADESCALEITEM.ISFORSTANDARDS">use_as_rubric</column>
     </columns>
     <sql>
