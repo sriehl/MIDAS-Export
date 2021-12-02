@@ -12,6 +12,24 @@
     </columns>
     <sql>
       <![CDATA[
+        with gradescales as (
+        select distinct
+            gradescaleitem.id
+        from
+          gradescaleitem
+          left join courses
+            on courses.gradescaleid = gradescaleitem.id
+          left join school_course
+            on school_course.courseid = courses.id
+        where
+          gradescaleitem.gradescaleid = -1
+          and gradescaleitem.gradescaletype != 'SPECIAL'
+          and gradescaleitem.dcid != 1
+          and school_course.schoolid is not null
+          and school_course.schoolid not in (79438)
+
+        )
+
         select
             gradescaleitem.dcid "id"
           , '' "district_id"
@@ -21,7 +39,7 @@
         from
           gradescaleitem
         where
-          gradescaleid = 175
+          gradescaleitem.gradescaleid in (select id from gradescales)
       ]]>
     </sql>
   </query>

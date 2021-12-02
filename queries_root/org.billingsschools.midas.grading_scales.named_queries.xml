@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<queries>
+  <query name="org.billingsschools.midas.grading_scales" coreTable="GRADESCALEITEM" flattened="true" tags="">
+    <summary>MIDAS Grading Scales</summary>
+    <description>MIDAS Grading Scale data</description>
+    <columns>
+      <column column="GRADESCALEITEM.DCID">id</column>
+      <column column="GRADESCALEITEM.NAME">name</column>
+      <column column="GRADESCALEITEM.NAME">abbr</column>
+      <column column="GRADESCALEITEM.DESCRIPTION">description</column>
+      <column column="GRADESCALEITEM.DESCRIPTION">district_id</column>
+      <column column="SCHOOL_COURSE.SCHOOLID">school_id</column>
+      <column column="GRADESCALEITEM.DESCRIPTION">is_pring</column>
+      <column column="GRADESCALEITEM.ISFORSTANDARDS">use_as_rubric</column>
+    </columns>
+    <sql>
+      <![CDATA[
+        select distinct
+            gradescaleitem.dcid "id"
+          , gradescaleitem.name "name"
+          , gradescaleitem.name "abbr"
+          , gradescaleitem.description "description"
+          , '' "district_id"
+          , school_course.schoolid "school_id"
+          , '1' "is_print"
+          , gradescaleitem.isforstandards "use_as_rubric"
+        from
+          gradescaleitem
+          left join courses
+            on courses.gradescaleid = gradescaleitem.id
+          left join school_course
+            on school_course.courseid = courses.id
+        where
+          gradescaleitem.gradescaleid = -1
+          and gradescaleitem.gradescaletype != 'SPECIAL'
+          and gradescaleitem.dcid != 1
+          and school_course.schoolid is not null
+          and school_course.schoolid not in (79438)
+        order by
+          gradescaleitem.dcid
+      ]]>
+    </sql>
+  </query>
+</queries>
