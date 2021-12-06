@@ -42,7 +42,11 @@
           , students.last_name "last_name"
           , students.first_name "first_name"
           , students.middle_name "mid_name"
-          , students.gender "gender_id"
+          , case students.gender
+              when 'M' then '2'
+              when 'F' then '1'
+              else ''
+            end "gender_id"
           , to_char(students.dob, 'yyyy-mm-dd') "dob"
           , to_char(students.student_number) "username"
           , case
