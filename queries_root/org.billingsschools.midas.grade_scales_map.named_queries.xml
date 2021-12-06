@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<queries>
+  <query name="org.billingsschools.midas.grade_scales_map" coreTable="GRADESCALEITEM" flattened="true" tags="">
+    <summary>MIDAS Grade Scales Map</summary>
+    <description>MIDAS Grade Scales Map data</description>
+    <columns>
+      <column column="GRADESCALEITEM.DCID">id</column>
+      <column column="GRADESCALEITEM.DCID">grading_scale_id</column>
+      <column column="GRADESCALEITEM.DCID">grade_id</column>
+      <column column="GRADESCALEITEM.GRADE_POINTS">gpa_points</column>
+      <column column="GRADESCALEITEM.COUNTSINGPA">is_gpa</column>
+      <column column="GRADESCALEITEM.GRADUATIONCREDIT">is_graduation</column>
+      <column column="GRADESCALEITEM.TEACHERSCALE">is_teacher</column>
+      <column column="GRADESCALEITEM.CUTOFFPERCENTAGE">min_score</column>
+      <column column="GRADESCALEITEM.VALUE">value</column>
+      <column column="GRADESCALEITEM.CUTOFFPERCENTAGE">sort_order</column>
+      <column column="GRADESCALEITEM.TEACHERSCALE">is_override_only</column>
+    </columns>
+    <sql>
+      <![CDATA[
+        select
+            gradescaleitem.dcid "id"
+          , gradescale.dcid "grading_scale_id"
+          , gradescaleitem.dcid "grade_id"
+          , gradescaleitem.grade_points "gpa_points"
+          , coalesce(gradescaleitem.countsingpa, 0) "is_gpa"
+          , coalesce(gradescaleitem.graduationcredit, 0) "is_graduation"
+          , gradescaleitem.teacherscale "is_teacher"
+          , gradescaleitem.cutoffpercentage "min_score"
+          , gradescaleitem.value "value"
+          , row_number() over (partition by gradescale.dcid order by gradescaleitem.cutoffpercentage desc, gradescaleitem.dcid) "sort_order"
+          , case when gradescaleitem.teacherscale = 1 then 0 else 1 end "is_override_only"
+        from
+          gradescaleitem
+          left join gradescaleitem gradescale
+            on gradescale.id = gradescaleitem.gradescaleid
+        where
+          gradescaleitem.gradescaleid in (
+            select distinct
+                gradescaleitem.id
+            from
+              gradescaleitem
+              left join courses
+                on courses.gradescaleid = gradescaleitem.id
+              left join school_course
+                on school_course.courseid = courses.id
+            where
+              gradescaleitem.gradescaleid = -1
+              and gradescaleitem.gradescaletype != 'SPECIAL'
+              and gradescaleitem.dcid != 1
+              and school_course.schoolid is not null
+              and school_course.schoolid not in (79438)
+          )
+      ]]>
+    </sql>
+  </query>
+</queries>
