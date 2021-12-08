@@ -85,7 +85,7 @@
             on studentemail.studentsdcid = students.dcid
         where
           students.enroll_status = 0
-          and students.schoolid not in (79438)
+          and students.schoolid not in (79438, 6200)
 
         union all
 
