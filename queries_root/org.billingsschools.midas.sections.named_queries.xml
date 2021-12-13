@@ -33,7 +33,7 @@
           , courses.id "course_id"
           , sections.schoolid "school_id"
           , period.abbreviation "period_abbr"
-          , terms.abbreviation "term_abbr"
+          , terms.dcid "term_id"
           , section_meeting.cycle_day_letter "day_name"
           , sections.section_number "section_num"
           , sections.maxenrollment "max_enrollment"
