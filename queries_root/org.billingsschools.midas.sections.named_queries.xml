@@ -8,7 +8,7 @@
       <column column="COURSES.ID">course_id</column>
       <column column="SECTIONS.SCHOOLID">school_id</column>
       <column column="PERIOD.ABBREVIATION">period_abbr</column>
-      <column column="TERMS.ABBREVIATION">term_abbr</column>
+      <column column="TERMS.ID">term_id</column>
       <column column="SECTION_MEETING.CYCLE_DAY_LETTER">day_name</column>
       <column column="SECTIONS.SECTION_NUMBER">section_num</column>
       <column column="SECTIONS.MAXENROLLMENT">max_enrollment</column>
