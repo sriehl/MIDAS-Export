@@ -73,7 +73,9 @@
           sections.dcid is not null
           and storedgrades.grade is not null
           and grades.dcid is not null
-          and storedgrades.termid >= 2700
+          --and storedgrades.termid >= 2700
+          and students.enroll_status = 0
+          and students.schoolid not in (79438, 6200)
       ]]>
     </sql>
   </query>
