@@ -87,7 +87,7 @@
           students.enroll_status = 0
           and students.schoolid not in (79438, 6200)
 
-        union all
+        /*union all
 
         select
             users.psguid "external_id"
@@ -118,7 +118,7 @@
           )
           and users.email_addr is not null
           and schoolstaff.status = 1
-          and schoolstaff.schoolid not in (79438, 6200, 1258, 1267, 1834, 999999, 0)
+          and schoolstaff.schoolid not in (79438, 6200, 1258, 1267, 1834, 999999, 0)*/
       ]]>
     </sql>
   </query>
