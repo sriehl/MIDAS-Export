@@ -53,7 +53,7 @@
         union all
 
         select
-            users.psguid "user_id"
+            s_mt_usr_x.seid "user_id"
           , sections.id
           , '1' "is_teacher"
           , '1' "status_id"
@@ -68,6 +68,8 @@
             and terms.schoolid = sections.schoolid
           left join users
             on users.dcid = schoolstaff.users_dcid
+          left join s_mt_usr_x
+            on s_mt_usr_x.usersdcid = users.dcid
         where
           floor(sections.termid / 100) = (select yearid from config)
       ]]>
