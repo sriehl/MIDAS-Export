@@ -9,8 +9,8 @@
       <column column="STUDENTS.FIRST_NAME">first_name</column>
       <column column="STUDENTS.MIDDLE_NAME">mid_name</column>
       <column column="STUDENTS.GENDER">gender_id</column>
-      <column column="STUDENTS.DOB">dob</column>
-      <column column="STUDENTS.DOB">username</column>
+      <column column="STUDENTS.GENDER">dob</column>
+      <column column="STUDENTS.GENDER">username</column>
       <column column="STUDENTS.ENROLL_STATUS">account_status</column>
       <column column="STUDENTS.FEDETHNICITY">us_race_id</column>
       <column column="STUDENTS.FEDETHNICITY">is_hispanic</column>
