@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<queries>
+  <query name="org.billingsschools.midas.grades_ip" coreTable="STOREDGRADES" flattened="true" tags="">
+    <summary>MIDAS Grades In Progress</summary>
+    <description>MIDAS Grades In Progress data</description>
+    <columns>
+      <column column="STOREDGRADES.DCID">id</column>
+      <column column="SECTIONS.DCID">section_id</column>
+      <column column="GRADESCALEITEM.DCID">grade_id</column>
+      <column column="STOREDGRADES.EARNEDCRHRS">credits_earned</column>
+      <column column="STOREDGRADES.POTENTIALCRHRS">credits_possible</column>
+      <column column="STOREDGRADES.PERCENT">overall_percent</column>
+      <column column="STUDENTS.ID">student_id</column>
+      <column column="STOREDGRADES.PERCENT">is_override</column>
+      <column column="TERMS.DCID">grading_period_id</column>
+      <column column="GRADESCALEITEM.DCID">grade_scale_id</column>
+      <column column="GRADESCALEITEM.DCID">is_standard</column>
+      <column column="STOREDGRADES.GRADE">comments</column>
+      <column column="STOREDGRADES.GRADE">timestamp</column>
+    </columns>
+    <sql>
+      <![CDATA[
+        with grades as (
+          select
+              gradescaleitem.dcid
+            , gradescaleitem.id
+            , gradescaleitem.gradescaleid
+            , gradescaleitem.name
+            , coalesce(gradescale.name, gradescale_special_scale.name) scale
+            , coalesce(gradescale.dcid, gradescale_special_scale.dcid) scale_dcid
+          from
+            gradescaleitem
+            left join gradescaleitem gradescale
+              on gradescale.id = gradescaleitem.gradescaleid
+              and gradescale.gradescaletype != 'SPECIAL'
+            left join gradescaleitem gradescale_special
+              on gradescale_special.id = gradescaleitem.gradescaleid
+              and gradescale_special.gradescaletype = 'SPECIAL'
+            left join gradescaleitem gradescale_special_scale
+              on gradescale_special_scale.specialgradescaledcid = gradescale_special.dcid
+          where
+            gradescaleitem.gradescaleid > 0
+        )
+
+        select
+            pgfinalgrades.dcid "id"
+          , sections.dcid "section_id"
+          , coalesce(grades_section.dcid, grades_course.dcid) "grade_id"
+          , '0' "credits_earned"
+          , coalesce(courses.credit_hours, 0) "credits_possible"
+          , pgfinalgrades.percent "overall_percent"
+          , students.psguid "student_id"
+          , coalesce(pgfinalgrades.overridefg, '0') "is_override"
+          , terms.dcid "grading_period_id"
+          , coalesce(grades_section.scale_dcid, grades_course.scale_dcid) "grade_scale_id"
+          , '0' "is_standard"
+          ,  to_char(substr(pgfinalgrades.comment_value,0,3999)) "comments"
+          , to_char(pgfinalgrades.lastgradeupdate, 'YYYY-MM-DD HH24' || chr(58) || 'MI' || chr(58) || 'SS') "timestamp"
+        from
+          cc
+          left join sections
+            on sections.id = cc.sectionid
+          left join students
+            on students.id = cc.studentid
+          left join terms
+            on terms.id = sections.termid
+            and terms.schoolid = sections.schoolid
+          left join pgfinalgrades
+            on pgfinalgrades.sectionid = cc.sectionid
+            and pgfinalgrades.studentid = students.id
+          left join courses
+            on courses.course_number = sections.course_number
+          left join (select * from grades) grades_section
+            on grades_section.name = pgfinalgrades.grade
+            and grades_section.gradescaleid = sections.gradescaleid
+          left join (select * from grades) grades_course
+            on grades_course.name = pgfinalgrades.grade
+            and grades_course.gradescaleid = courses.gradescaleid
+        where
+          cc.dateenrolled <= sysdate
+          and cc.dateleft > sysdate
+          and coalesce(grades_section.scale_dcid, grades_course.scale_dcid) is not null
+      ]]>
+    </sql>
+  </query>
+</queries>
