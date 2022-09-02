@@ -21,6 +21,8 @@
       <column column="STUDENTS.SCHOOLID">school_id</column>
       <column column="STUDENTS.SCHOOLID">role_id</column>
       <column column="STUDENTS.GRADE_LEVEL">grade_id</column>
+      <column column="STUDENTS.STUDENT_NUMBER">local_id</column>
+      <column column="STUDENTS.STATE_STUDENTNUMBER">state_id</column>
     </columns>
     <sql>
       <![CDATA[
@@ -79,6 +81,8 @@
               when -1 then '19'
               else to_char(students.grade_level)
             end "grade_id"
+          , to_char(students.student_number) "local_id"
+          , students.state_studentnumber "state_id"
         from
           students
           left join (select * from studentemail) studentemail
@@ -86,39 +90,6 @@
         where
           students.enroll_status = 0
           and students.schoolid not in (79438, 6200)
-
-        /*union all
-
-        select
-            users.psguid "external_id"
-          , users.last_name "last_name"
-          , users.first_name "first_name"
-          , users.middle_name "mid_name"
-          , '' "gender_id"
-          , '' "dob"
-          , users.email_addr "username"
-          , case when (select count(1) from schoolstaff where schoolstaff.users_dcid = users.dcid and schoolstaff.status = 1) > 0 then 9 else 99 end "account_status"
-          , '' "us_race_id"
-          , '' "is_hispanic"
-          , users.email_addr "email"
-          , '' "phone_number"
-          , '' "phone_country_id"
-          , '' "phone_extension"
-          , schoolstaff.schoolid "school_id"
-          , '2' "role_id"
-          , '' "grade_id"
-        from
-          users
-          left join schoolstaff
-            on schoolstaff.users_dcid = users.dcid
-        where
-          (
-            users.ptaccess = 1
-            or users.psaccess = 1
-          )
-          and users.email_addr is not null
-          and schoolstaff.status = 1
-          and schoolstaff.schoolid not in (79438, 6200, 1258, 1267, 1834, 999999, 0)*/
       ]]>
     </sql>
   </query>
