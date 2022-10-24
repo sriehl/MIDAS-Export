@@ -28,11 +28,11 @@
             and t.isyearrec = 1
         )
 
-        select
+        select distinct
             sections.id "section_id"
           , courses.id "course_id"
           , sections.schoolid "school_id"
-          , period.abbreviation "period_abbr"
+          , '' "period_abbr"
           , terms.dcid "term_id"
           , section_meeting.cycle_day_letter "day_name"
           , sections.section_number "section_num"
@@ -48,10 +48,6 @@
             and terms.schoolid = sections.schoolid
           left join section_meeting
             on section_meeting.sectionid = sections.id
-          left join period
-            on period.period_number = section_meeting.period_number
-            and period.schoolid = sections.schoolid
-            and period.year_id = floor(sections.termid / 100)
         where
           floor(sections.termid / 100) = (select yearid from config)
       ]]>
