@@ -44,7 +44,7 @@
 
         select
             pgfinalgrades.dcid "id"
-          , sections.dcid "section_id"
+          , sections.id "section_id"
           , coalesce(grades_section.dcid, grades_course.dcid) "grade_id"
           , '0' "credits_earned"
           , coalesce(courses.credit_hours, 0) "credits_possible"
