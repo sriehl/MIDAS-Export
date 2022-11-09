@@ -24,10 +24,10 @@
             and t.isyearrec = 1
         )
 
-        select distinct
+        select
             courses.id "course_id"
           , courses.course_number "course_no"
-          , '' "school_id"
+          , school_course.schoolid "school_id"
           , courses.course_name "name"
           , courses.course_name "short_name"
           , courses.maxclasssize "max_enrollment"
