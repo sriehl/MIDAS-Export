@@ -72,6 +72,7 @@
             on s_mt_usr_x.usersdcid = users.dcid
         where
           floor(sections.termid / 100) = (select yearid from config)
+          and s_mt_usr_x.seid is not null
       ]]>
     </sql>
   </query>
