@@ -50,6 +50,7 @@
             on section_meeting.sectionid = sections.id
         where
           floor(sections.termid / 100) = (select yearid from config)
+          and sections.schoolid not in (1258, 6200, 79438)
       ]]>
     </sql>
   </query>

@@ -37,6 +37,7 @@
             on school_course.courseid = courses.id
         where
           school_course.yearid = (select yearid from config)
+          and school_course.schoolid not in (1258, 6200, 79438)
       ]]>
     </sql>
   </query>
