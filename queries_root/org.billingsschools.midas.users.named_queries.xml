@@ -74,7 +74,10 @@
           , students.home_phone "phone_number"
           , '' "phone_country_id"
           , '' "phone_extension"
-          , students.schoolid "school_id"
+          , case students.schoolid
+              when 79438 then students.enrollment_schoolid
+              else students.schoolid
+            end "school_id"
           , '1' "role_id"
           , case students.grade_level
               when 0 then '20'
@@ -88,8 +91,9 @@
           left join (select * from studentemail) studentemail
             on studentemail.studentsdcid = students.dcid
         where
-          students.enroll_status = 0
-          and students.schoolid not in (79438, 6200)
+          students.enrollment_schoolid != 79438
+          and students.schoolid not in (6200)
+          and students.exitdate >= date'2020-01-01'
       ]]>
     </sql>
   </query>
