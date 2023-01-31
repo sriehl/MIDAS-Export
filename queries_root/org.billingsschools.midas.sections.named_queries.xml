@@ -55,6 +55,7 @@
         where
           floor(sections.termid / 100) = (select yearid from config)
           and sections.schoolid not in (1258, 6200, 79438)
+          and school_course.dcid is not null
       ]]>
     </sql>
   </query>
