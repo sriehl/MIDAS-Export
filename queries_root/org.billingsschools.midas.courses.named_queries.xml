@@ -4,7 +4,7 @@
     <summary>MIDAS Courses</summary>
     <description>MIDAS Courses data</description>
     <columns>
-      <column column="COURSES.ID">course_id</column>
+      <column column="SCHOOL_COURSE.DCID">course_id</column>
       <column column="COURSES.COURSE_NUMBER">course_no</column>
       <column column="SCHOOL_COURSE.SCHOOLID">school_id</column>
       <column column="COURSES.COURSE_NAME">name</column>
@@ -25,7 +25,7 @@
         )
 
         select
-            courses.id "course_id"
+            school_course.dcid "course_id"
           , courses.course_number "course_no"
           , school_course.schoolid "school_id"
           , courses.course_name "name"

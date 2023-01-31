@@ -30,7 +30,7 @@
 
         select distinct
             sections.id "section_id"
-          , courses.id "course_id"
+          , school_course.dcid "course_id"
           , sections.schoolid "school_id"
           , '' "period_abbr"
           , terms.dcid "term_id"
@@ -48,6 +48,10 @@
             and terms.schoolid = sections.schoolid
           left join section_meeting
             on section_meeting.sectionid = sections.id
+          left join school_course
+            on school_course.courseid = courses.id
+            and school_course.schoolid = section_meeting.schoolid
+            and section_meeting.year_id = school_course.yearid
         where
           floor(sections.termid / 100) = (select yearid from config)
           and sections.schoolid not in (1258, 6200, 79438)
