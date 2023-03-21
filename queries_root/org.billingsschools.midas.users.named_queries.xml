@@ -52,6 +52,7 @@
           , to_char(students.dob, 'yyyy-mm-dd') "dob"
           , to_char(students.student_number) "username"
           , case
+              when students.enroll_status = -1 then 15
               when students.enroll_status = 0 then 9
               when students.enroll_status = 2 then 1
               when students.exitcode like '4%' then 2
