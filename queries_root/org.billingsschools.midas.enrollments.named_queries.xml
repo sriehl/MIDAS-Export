@@ -49,6 +49,7 @@
             on students.id = cc.studentid
         where
           floor(cc.termid / 100) = (select yearid from config)
+          and cc.schoolid not in (1258, 6200, 79438)
 
         union all
 
