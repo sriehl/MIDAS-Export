@@ -23,6 +23,9 @@
       <column column="STUDENTS.GRADE_LEVEL">grade_id</column>
       <column column="STUDENTS.STUDENT_NUMBER">local_id</column>
       <column column="STUDENTS.STATE_STUDENTNUMBER">state_id</column>
+      <column column="STUDENTS.STATE_STUDENTNUMBER">ell</column>
+      <column column="STUDENTS.STATE_STUDENTNUMBER">sped</column>
+      <column column="STUDENTS.STATE_STUDENTNUMBER">504</column>
     </columns>
     <sql>
       <![CDATA[
@@ -87,10 +90,17 @@
             end "grade_id"
           , to_char(students.student_number) "local_id"
           , students.state_studentnumber "state_id"
+          , case when s_mt_stu_language_x.lepstatus = '1' then 1 else 0 end "ELL"
+          , coalesce(s_mt_stu_programs_x.spedstatus, 0) "SpEd"
+          , coalesce(s_mt_stu_programs_x.is504, 0) "section504"
         from
           students
           left join (select * from studentemail) studentemail
             on studentemail.studentsdcid = students.dcid
+          left join s_mt_stu_language_x
+            on students.dcid = s_mt_stu_language_x.studentsdcid
+          left join s_mt_stu_programs_x
+            on students.dcid = s_mt_stu_programs_x.studentsdcid
         where
           students.enrollment_schoolid != 79438
           and students.schoolid not in (6200)
