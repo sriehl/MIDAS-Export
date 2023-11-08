@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <queries>
-  <query name="org.billingsschools.midas.users" coreTable="USERS" flattened="true" tags="">
+  <query name="org.billingsschools.midas.users" coreTable="STUDENTS" flattened="true" tags="">
     <summary>MIDAS Users</summary>
     <description>MIDAS User data</description>
     <columns>
@@ -23,9 +23,10 @@
       <column column="STUDENTS.GRADE_LEVEL">grade_id</column>
       <column column="STUDENTS.STUDENT_NUMBER">local_id</column>
       <column column="STUDENTS.STATE_STUDENTNUMBER">state_id</column>
-      <column column="STUDENTS.STATE_STUDENTNUMBER">ell</column>
-      <column column="STUDENTS.STATE_STUDENTNUMBER">sped</column>
-      <column column="STUDENTS.STATE_STUDENTNUMBER">504</column>
+      <column column="S_MT_STU_LANGUAGE_X.LEPSTATUS">ell</column>
+      <column column="S_MT_STU_PROGRAMS_X.SPEDSTATUS">sped</column>
+      <column column="S_MT_STU_PROGRAMS_X.IS504">section504</column>
+      <column column="S_MT_STU_PROGRAMS_X.GIFTEDTALENTED">giftedtalented</column>
     </columns>
     <sql>
       <![CDATA[
@@ -93,6 +94,7 @@
           , case when s_mt_stu_language_x.lepstatus = '1' then 1 else 0 end "ELL"
           , coalesce(s_mt_stu_programs_x.spedstatus, 0) "SpEd"
           , coalesce(s_mt_stu_programs_x.is504, 0) "section504"
+          , coalesce(s_mt_stu_programs_x.giftedtalented, 0) "giftedtalented"
         from
           students
           left join (select * from studentemail) studentemail
